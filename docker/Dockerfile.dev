@@ -1,0 +1,41 @@
+# Usar Node.js 22 LTS Alpine (imagen ligera)
+FROM node:22-alpine
+
+# Instalar dependencias del sistema para development
+RUN apk add --no-cache \
+    git \
+    curl \
+    bash \
+    ca-certificates
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Crear usuario no-root para seguridad
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodeuser -u 1001 -G nodejs
+
+# Copiar archivos de dependencias primero (para cache eficiente)
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar el resto del código fuente
+COPY . .
+
+# Cambiar propietario de archivos al usuario no-root
+RUN chown -R nodeuser:nodejs /app
+
+# Cambiar a usuario no-root
+USER nodeuser
+
+# Exponer puerto 3000
+EXPOSE 3000
+
+# Configurar variables de entorno para desarrollo
+ENV NODE_ENV=development
+ENV DEBUG=the-news:*
+
+# Comando por defecto para desarrollo (con hot reload)
+CMD ["npm", "run", "dev"]
