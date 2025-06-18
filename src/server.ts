@@ -8,6 +8,9 @@ import dotenv from 'dotenv';
 import { NewsService } from './services/news.service';
 import { NewsController } from './controllers/news.controller';
 import { createNewsRoutes } from './routes/news.routes';
+import { createCategoryRoutes } from './routes/category.routes';
+import { CategoryService } from './services/category.service';
+import { CategoryController } from './controllers/category.controller';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -89,10 +92,14 @@ function setupRoutes(): void {
   // Crear instancias de nuestros módulos
   const newsService = new NewsService(database);
   const newsController = new NewsController(newsService);
+  const categoryService = new CategoryService(database);
+  const categoryController = new CategoryController(categoryService)
   
   // Registrar rutas de noticias
   const newsRoutes = createNewsRoutes(newsController);
+  const categoryRoutes = createCategoryRoutes(categoryController);
   app.use('/api/news', newsRoutes);
+  app.use('/api/categories', categoryRoutes);
   
   console.log('📰 Rutas de noticias configuradas exitosamente');
 }

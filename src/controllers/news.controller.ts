@@ -10,7 +10,6 @@ export class NewsController {
 
  createNews = async (req: Request, res: Response): Promise<void> => {
    try {
-     // 1. Extraer datos del body
      const { title, content, author, category, tags } = req.body;
      
      // 2. Validación básica
